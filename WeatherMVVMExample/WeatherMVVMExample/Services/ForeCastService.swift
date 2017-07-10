@@ -60,7 +60,7 @@ struct ForecastResponse: ResponseObjectSerializable, ResponseCollectionSerializa
     init?(response: HTTPURLResponse, representation: AnyObject) {
         
         // City info
-        let city = representation.value(forKeyPath: "city") as AnyObject
+        _ = representation.value(forKeyPath: "city") as AnyObject
         // TODO city
         
         if let weatherObjects = representation.value(forKeyPath: "list") as? NSArray {
@@ -78,7 +78,7 @@ struct ForecastResponse: ResponseObjectSerializable, ResponseCollectionSerializa
                  * Wind data
                  */
                 // Wind
-                let wind = weatherObject.value(forKeyPath: "wind") as AnyObject
+                _ = weatherObject.value(forKeyPath: "wind") as AnyObject
                 // TODO wind
             }
         }
