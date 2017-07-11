@@ -8,20 +8,23 @@
 
 import Foundation
 import Alamofire
+import RxSwift
+import RxCocoa
+import RxAlamofire
 
 struct ForecastService {
     
     private static let rootPath = "forecast"
     
-    static func get(dayCount: Int, cityId: Int?, completion: @escaping (_ response: ForecastResponse?) -> ()) {
+    static func get(dayCount: Int, cityId: String?) -> Observable<[Weather]> {
         
         var parameters = [String : AnyObject]()
         
         if let city = cityId {
-            parameters = ["id" : city as AnyObject ,
-                          "units" : "metric" as AnyObject,
-                          "cnt" : dayCount as AnyObject,
-                          "lang" : "tr" as AnyObject]
+            parameters = ["id" : city,
+                          "units" : "metric",
+                          "cnt" : dayCount,
+                          "lang" : "tr"] as [String : AnyObject]
         } else {
             // TODO get location
         }
@@ -29,20 +32,17 @@ struct ForecastService {
         let router = Router(method: .get, path: ForecastService.rootPath, parameters: parameters)
         do {
             let request = try router.asURLRequest()
-            _ = Alamofire.request(request)
-                .responseObject(completionHandler: { (response: DataResponse<ForecastResponse>) in
-                    
-                    print("Weather response: \(response)")
-                    
-                    if let value = response.result.value {
-                        completion(value)
-                    } else {
-                        completion(nil)
+            return RxAlamofire.requestJSON(request)
+                .debug()
+                .map({ (response, json) -> [Weather] in
+                    guard let forecastResponse = ForecastResponse(response: response, representation: json as AnyObject) else {
+                        return [Weather]()
                     }
+                    return  forecastResponse.weathers
                 })
         } catch let error {
             print("An error occured while fetching weather from API. Error details:\n\(error)")
-            completion(nil)
+            return Observable.just([])
         }
     }
     

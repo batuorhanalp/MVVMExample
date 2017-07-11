@@ -16,7 +16,7 @@ struct Router: URLRequestConvertible {
     // Api route
     static private let baseUrlString = "\(url)/data/2.5/"
     // Api app id
-    private let appId = "d108934eb35a6f0c22903f17ff95077d"
+    private let appId = "83a486229a2d0ba27eec7b79bc6defde"
     var path: String!
     var parameters: Parameters?
     var method: Alamofire.HTTPMethod!

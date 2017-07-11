@@ -8,6 +8,9 @@ target 'WeatherMVVMExample' do
   pod 'Alamofire'
   pod 'R.swift'
   pod 'Reachability', '~> 3'
+  pod 'RxSwift'
+  pod 'RxCocoa'
+  pod 'RxAlamofire'
 
   target 'WeatherMVVMExampleTests' do
     inherit! :search_paths

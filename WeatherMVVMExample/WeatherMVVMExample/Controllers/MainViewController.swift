@@ -7,12 +7,29 @@
 //
 
 import UIKit
+import RxSwift
+import RxCocoa
 
-class ViewController: UIViewController {
+class MainViewController: UIViewController {
+    
+    @IBOutlet weak var tableView: UITableView!
+    @IBOutlet weak var cityField: UITextField!
 
+    var weatherViewModel = WeatherViewModel()
+    let disposeBag = DisposeBag()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
+                
+        cityField.rx.text.orEmpty.bind(to: weatherViewModel.city).disposed(by: disposeBag)
+        
+        weatherViewModel.data
+            .bind(to: tableView.rx.items(cellIdentifier: R.reuseIdentifier.weatherCell.identifier, cellType: WeatherTableViewCell.self))
+            { (row, element, cell) in
+                cell.descriptionLabel.text = element.currentDescription
+            }
+            .disposed(by: disposeBag)
+
     }
 
     override func didReceiveMemoryWarning() {

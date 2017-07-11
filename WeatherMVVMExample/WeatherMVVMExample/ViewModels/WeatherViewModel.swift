@@ -7,15 +7,24 @@
 //
 
 import Foundation
+import RxSwift
+import RxCocoa
 
-class WeatherViewModel: NSObject {
+struct WeatherViewModel {
     
-    fileprivate let weather: Weather
+    //fileprivate let weather: Weather
+        
+    let city = Variable("")
+    let disposeBag = DisposeBag()
     
-    init(weather: Weather) {
-        
-        self.weather = weather
-        
-    }
+    lazy var data: Observable<[Weather]> = {
+        return self.city.asObservable()
+            .throttle(0.3, scheduler: MainScheduler.instance)
+            .distinctUntilChanged()
+            .flatMapLatest {
+                ForecastService.get(dayCount: 7, cityId: $0)
+            }
+    }()
+    
     
 }
